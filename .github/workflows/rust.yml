@@ -1,0 +1,39 @@
+name: Rust
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install maelstrom deps
+      run: sudo apt-get install -y graphviz gnuplot
+
+    - uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Build
+      run: cargo build --verbose
+
+    - name: Run tests
+      run: cargo test --verbose
+
+    - name: Build examples
+      run: cargo build --example=01_echo_server
+
+    - name: Download Maelstrom
+      run: ./scripts/download_maelstrom.sh
+
+    - name: run 01_echo_server
+      run: java -Djava.awt.headless=true -jar ./target/maelstrom/lib/maelstrom.jar test -w echo --bin ./target/debug/examples/01_echo_server --nodes n1,n2,n3 --time-limit 10 --log-stderr
