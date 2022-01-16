@@ -1,5 +1,5 @@
 # maelstrom-rs
-A Rust crate to easily write Maelstrom's app
+A Rust crate to easily write Maelstrom's app as Actors
 
 ## What is Maelstrom?
 
