@@ -1,19 +1,23 @@
+//! The actor runtime
+use crate::actor::Actor;
 use crate::message::{Request, Response};
-use crate::node::Node;
 use log::error;
 use serde::de::Error;
 use serde_json::{Map, Value};
 use std::io::stdin;
 
+/// A Runtime to run an Actor
 pub struct Runtime {
-    node: Box<dyn Node>,
+    node: Box<dyn Actor>,
 }
 
 impl Runtime {
-    pub fn new(node: Box<dyn Node>) -> Runtime {
+    /// Create a new Runtime.
+    pub fn new(node: Box<dyn Actor>) -> Runtime {
         Runtime { node }
     }
 
+    /// Start the runtime.
     pub fn start(&mut self) {
         let mut buffer = String::new();
         loop {
@@ -53,11 +57,8 @@ impl Runtime {
                 }
             } else {
                 match self.node.receive(&message) {
-                    Ok(responses) => {
-                        responses
-                            .iter()
-                            .for_each(|resp| self.create_response(&message, resp));
-                    }
+                    Ok(Some(response)) => self.create_response(&message, &response),
+                    Ok(None) => {}
                     Err(_) => unimplemented!(),
                 }
             }
@@ -90,7 +91,7 @@ impl Runtime {
 
         match self.node.init(node_id.as_str(), node_ids) {
             Ok(_) => self.create_init_response(message),
-            Err(error) => unimplemented!("handle error on init {}", error),
+            Err(error) => unimplemented!("handle error on init {:?}", error),
         };
         Ok(())
     }

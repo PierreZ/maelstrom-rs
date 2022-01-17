@@ -1,13 +1,22 @@
+//! Message used by the Actor model
+
 use serde::de::Error;
 use serde_json::{Map, Value};
 
+/// A request from the Maelstrom system
 #[derive(Debug, Clone)]
 pub struct Request {
+    /// Source of the request
     pub source: String,
+    /// Destination of the request
     pub destination: String,
+    /// Type of the message
     pub message_type: String,
+    /// ID of the message
     pub message_id: Option<u64>,
+    /// ID of the originated message
     pub in_reply_to: Option<u64>,
+    /// Body, composed of JSON values
     pub body: Map<String, Value>,
 }
 
@@ -68,9 +77,14 @@ impl Request {
     }
 }
 
+/// A response to broadcast to Maelstrom
 pub struct Response {
+    /// Type of the response
     pub message_type: String,
+    /// the response ID
     pub message_id: Option<u64>,
+    /// ID of the request
     pub in_reply_to: Option<u64>,
+    /// Body of the response, composed of JSON values
     pub body: Map<String, Value>,
 }
