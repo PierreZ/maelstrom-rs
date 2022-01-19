@@ -5,6 +5,7 @@ use maelstrom_rs::message::{Request, Response};
 use maelstrom_rs::runtime::Runtime;
 use serde_json::{Map, Value};
 
+// https://github.com/jepsen-io/maelstrom/blob/main/doc/02-echo/index.md
 fn main() {
     let node = EchoActor { node_id: None };
     let mut runtime = Runtime::new(Box::new(node));
@@ -22,7 +23,7 @@ impl Actor for EchoActor {
         Ok(())
     }
 
-    fn receive(&mut self, message: &Request) -> Result<Option<Response>, Error> {
+    fn receive(&mut self, message: &Request) -> Result<Vec<Response>, Error> {
         match message.message_type.as_str() {
             "echo" => self.handle_echo(message),
             _ => unimplemented!(
@@ -34,16 +35,11 @@ impl Actor for EchoActor {
 }
 
 impl EchoActor {
-    pub(crate) fn handle_echo(&self, request: &Request) -> Result<Option<Response>, Error> {
+    pub(crate) fn handle_echo(&self, request: &Request) -> Result<Vec<Response>, Error> {
         let echo = request.body.get("echo").unwrap().as_str().unwrap();
         let mut body = Map::new();
         body.insert("echo".to_string(), Value::from(String::from(echo)));
 
-        Ok(Some(Response {
-            message_type: "echo_ok".to_string(),
-            message_id: request.message_id.map(|id| id + 1),
-            in_reply_to: request.message_id,
-            body,
-        }))
+        Ok(vec![Response::new_from_request(request, body)])
     }
 }

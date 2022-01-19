@@ -1,7 +1,16 @@
 [package]
-name = "maelstrom-rs"
+name = "maelstrom_rs"
 version = "0.1.0"
 edition = "2021"
+authors = ["Pierre Zemb <contact@pierrezemb.fr>"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/PierreZ/maelstrom-rs"
+homepage = "https://github.com/PierreZ/maelstrom-rs"
+documentation = "https://docs.rs/maelstrom_rs"
+description = "A Rust crate to write toy distributed systems with Maelstrom as Actors."
+categories = ["development-tools::testing"]
+include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
