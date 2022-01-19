@@ -57,8 +57,7 @@ impl Runtime {
                 }
             } else {
                 match self.node.receive(&message) {
-                    Ok(Some(response)) => self.create_response(&message, &response),
-                    Ok(None) => {}
+                    Ok(vec) => vec.iter().map(|response |self.create_response(&message, response)).collect(),
                     Err(_) => unimplemented!(),
                 }
             }
@@ -112,26 +111,20 @@ impl Runtime {
         for (k, v) in response.body.iter() {
             body.insert(k.to_owned(), v.to_owned());
         }
-        self.send_response(request, body);
+        self.send_response(request, &response.destination, body);
     }
 
     fn create_init_response(&self, request: &Request) {
-        let response = Response {
-            message_type: "init_ok".to_string(),
-            message_id: request.message_id.map(|n| n + 1),
-            in_reply_to: request.message_id,
-            body: Default::default(),
-        };
-        self.create_response(request, &response);
+        self.create_response(request, &Response::new_from_request(request, Default::default()));
     }
 
-    fn send_response(&self, request: &Request, body: Map<String, Value>) {
+    fn send_response(&self, request: &Request, destination: &str, body: Map<String, Value>) {
         let mut reply = Map::new();
         reply.insert(
             String::from("src"),
             Value::from(request.destination.clone()),
         );
-        reply.insert(String::from("dest"), Value::from(request.source.clone()));
+        reply.insert(String::from("dest"), Value::from(String::from(destination)));
         reply.insert(String::from("body"), Value::from(body));
         eprintln!("reply: {:?}", &reply);
 

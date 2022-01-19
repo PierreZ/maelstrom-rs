@@ -78,7 +78,10 @@ impl Request {
 }
 
 /// A response to broadcast to Maelstrom
+#[derive(Debug, Clone)]
 pub struct Response {
+    /// Destination
+    pub destination: String,
     /// Type of the response
     pub message_type: String,
     /// the response ID
@@ -87,4 +90,17 @@ pub struct Response {
     pub in_reply_to: Option<u64>,
     /// Body of the response, composed of JSON values
     pub body: Map<String, Value>,
+}
+
+impl Response {
+    /// Create a Response that will be a reply from a Request
+    pub fn new_from_request(request: &Request, body: Map<String, Value>) -> Self {
+        Response {
+            destination: request.source.to_owned(),
+            message_type: (request.message_type.to_owned() + "_ok"),
+            message_id: request.message_id.map(|u64| u64 + 1),
+            in_reply_to: request.message_id,
+            body
+        }
+    }
 }

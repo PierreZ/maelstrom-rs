@@ -30,10 +30,13 @@ jobs:
       run: cargo test --verbose
 
     - name: Build examples
-      run: cargo build --example=01_echo_server
+      run: cargo build --examples
 
     - name: Download Maelstrom
       run: ./scripts/download_maelstrom.sh
 
     - name: run 01_echo_server
       run: java -Djava.awt.headless=true -jar ./target/maelstrom/lib/maelstrom.jar test -w echo --bin ./target/debug/examples/01_echo_server --nodes n1,n2,n3 --time-limit 10 --log-stderr
+
+    - name: run 02_broadcast
+      run: java -Djava.awt.headless=true -jar ./target/maelstrom/lib/maelstrom.jar test -w broadcast --bin ./target/debug/examples/02_broadcast  --time-limit 10 --log-stderr --rate 10

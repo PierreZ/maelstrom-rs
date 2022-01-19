@@ -29,7 +29,7 @@
 //!        Ok(())
 //!    }
 //!
-//!    fn receive(&mut self, message: &Request) -> Result<Option<Response>, Error> {
+//!    fn receive(&mut self, message: &Request) -> Result<Vec<Response>, Error> {
 //!        match message.message_type.as_str() {
 //!            "echo" => unimplemented!(),
 //!            _ => unimplemented!(),
