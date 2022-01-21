@@ -1,7 +1,6 @@
 //! The actor runtime
 use crate::actor::Actor;
 use crate::message::{Request, Response};
-use log::error;
 use serde::de::Error;
 use serde_json::{Map, Value};
 use std::io::stdin;
@@ -29,26 +28,26 @@ impl Runtime {
             {
                 Ok(v) => v,
                 Err(e) => {
-                    error!("could not deserialize stdin as json: {}", e);
-                    error!("stdin's content is {}", buffer);
+                    eprintln!("could not deserialize stdin as json: {}", e);
+                    eprintln!("stdin's content is {}", buffer);
                     continue;
                 }
             };
 
-            let message = match Request::try_from_json(&mut valid_json) {
+            let request = match Request::try_from_json(&mut valid_json) {
                 Ok(m) => m,
                 Err(error) => {
-                    error!("could not deserialize stdin as a Maelstrom json: {}", error);
+                    eprintln!("could not deserialize stdin as a Maelstrom json: {}", error);
                     continue;
                 }
             };
-            eprintln!("received {:?}", &message);
+            eprintln!("received {:?}", &request);
 
-            if message.message_type.as_str().eq("init") {
-                match self.handle_init(&message) {
+            if request.message_type.as_str().eq("init") {
+                match self.handle_init(&request) {
                     Ok(_) => {}
                     Err(error) => {
-                        error!(
+                        eprintln!(
                             "could not deserialize stdin as a Maelstrom init json: {}",
                             error
                         );
@@ -56,8 +55,8 @@ impl Runtime {
                     }
                 }
             } else {
-                match self.node.receive(&message) {
-                    Ok(vec) => vec.iter().map(|response |self.create_response(&message, response)).collect(),
+                match self.node.receive(&request) {
+                    Ok(vec) => vec.iter().map(|response |self.create_response(&request, response)).collect(),
                     Err(_) => unimplemented!(),
                 }
             }

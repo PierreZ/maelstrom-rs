@@ -8,8 +8,9 @@ readme = "README.md"
 repository = "https://github.com/PierreZ/maelstrom-rs"
 homepage = "https://github.com/PierreZ/maelstrom-rs"
 documentation = "https://docs.rs/maelstrom_rs"
-description = "A Rust crate to write toy distributed systems with Maelstrom as Actors."
+description = "A Rust crate to write toy distributed systems with Maelstrom as Actors"
 categories = ["development-tools::testing"]
+keywords = ["maelstrom", "testing", "actor"]
 include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -17,4 +18,3 @@ include = ["Cargo.toml", "src/**/*.rs", "README.md", "LICENSE"]
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-log = "0.4"
